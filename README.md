@@ -23,3 +23,4 @@ Step 2, Use the scripts options available to backup your file.
 *The script will save the file to the* `%USERPROFILE%/Documents/AngryBirdsEpicBackup/` *folder*  
 
 ## NOTICE: THIS SCRIPT WILL NOT WORK ON SAMSUNG DEVICES
+*without root
