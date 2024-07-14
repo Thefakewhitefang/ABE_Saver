@@ -1,0 +1,34 @@
+cls
+$ConnectionType = Read-Host -Prompt "Connect with wifi? (Y/N)"
+
+If ($ConnectionType -eq "Y"){
+    $IP = Read-Host -Prompt "Enter the IP/port"
+    cls
+    adb connect $IP
+}
+
+$DoProcess = Read-Host -Prompt "Backup or Restore files? (B/R)"
+
+$Temporary = "/sdcard/Download/"
+$BackupFolder = $env:USERPROFILE + "\Documents\AngryBirdsEpicBackup\"
+
+If ($DoProcess -eq "B"){
+    adb shell run-as com.rovio.gold cat shared_prefs/com.rovio.gold.v2.playerprefs.xml | cat > $Temporary com.rovio.gold.v2.playerprefs.xml
+}
+If (!(Test-Path -Path $BackupFolder)){mkdir $BackupFolder | Out-Null}
+
+adb pull $Temporary/com.rovio.gold.v2.playerprefs.xml $BackupFolder
+adb shell rm /storage/emulated/0/Download/com.rovio.gold.v2.playerprefs.xml
+
+If ([System.IO.File]::Exists($BackupFolder + "com.rovio.gold.v2.playerprefs.xml")){
+    Write-Host "Backed up file on PC on location:" $BackupFolder
+}
+Timeout -NOBREAK -t 5
+}
+
+If ($DoProcess -eq "R"){
+    adb push com.rovio.gold.v2.playerprefs.xml $Temporary
+    adb shell cat /sdcard/Download/com.rovio.gold.v2.playerprefs.xml | run-as com.rovio.gold dd of=shared_prefs/com.rovio.gold.v2.playerprefs.xml
+    Write-Host "Files restored"
+    Timeout -NOBREAK -t 5
+}
